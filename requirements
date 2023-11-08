@@ -6,4 +6,8 @@ What are some metrics that we should use to compare algorithms for each sort?
 - time complexity
 - work complexity
 - space complexity
+<<<<<<< HEAD
 - execution time / scalability graph
+=======
+- execution time / scalability graph
+>>>>>>> dca650324fd5a12a15e6da188cddf6c1aba32679
