@@ -6,8 +6,16 @@ What are some metrics that we should use to compare algorithms for each sort?
 - time complexity
 - work complexity
 - space complexity
-<<<<<<< HEAD
-- execution time / scalability graph
-=======
-- execution time / scalability graph
->>>>>>> dca650324fd5a12a15e6da188cddf6c1aba32679
+- execution time
+- scalability of exectution time
+- difference between times for sequential algorithms and their respective parallel algorithms
+- consider the stability of each algorithm
+
+type of data to use
+
+- nearly sorted data
+- completely random sorted data
+- sorted data
+- reverse sorted data
+- large data sets
+- small data sets
