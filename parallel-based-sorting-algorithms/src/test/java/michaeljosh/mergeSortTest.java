@@ -4,7 +4,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertArrayEquals;
 
 public class mergeSortTest {
-
     @Test
     public void testMergeSort() {
         int[] unsortedArray = { 4, 5, 6, 7, 3, 1, 8, 2, 9, 10 };
