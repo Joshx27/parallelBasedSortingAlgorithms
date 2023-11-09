@@ -18,6 +18,7 @@ type of data to use
 - sorted data
 - reverse sorted data
 - large data sets
+- all data set sizes in between (can be represented using a graph)
 - small data sets
 
 references
