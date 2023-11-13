@@ -21,6 +21,12 @@ type of data to use
 - all data set sizes in between (can be represented using a graph)
 - small data sets
 
+personal tips
+
+- learn more about the variables which determine the execution time
+- learn the fundamentals of constructing a parallel algorithm
+- understand time and work complexity for parallel algorithms
+
 references
 
 https://rachitvasudeva.medium.com/parallel-merge-sort-algorithm-e8175ab60e7
