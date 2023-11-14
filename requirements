@@ -21,6 +21,12 @@ type of data to use
 - all data set sizes in between (can be represented using a graph)
 - small data sets
 
+personal tips
+
+- learn more about the variables which determine the execution time
+- learn the fundamentals of constructing a parallel algorithm
+- understand time and work complexity for parallel algorithms
+
 references
 
 https://rachitvasudeva.medium.com/parallel-merge-sort-algorithm-e8175ab60e7
@@ -28,3 +34,4 @@ https://github.com/ahmet-uyar/parallel-merge-sort
 https://www.geeksforgeeks.org/merge-sort/
 https://cse.buffalo.edu/faculty/miller/Courses/CSE702/Sajid.Khan-Fall-2018.pdf
 https://github.com/eduardlopez/quicksort-parallel/blob/master/quicksort-omp.h
+https://github.com/Chream/RadixSort/blob/master/src/main/java/chream/radixsort/parallel/MultiRadixPara.java
