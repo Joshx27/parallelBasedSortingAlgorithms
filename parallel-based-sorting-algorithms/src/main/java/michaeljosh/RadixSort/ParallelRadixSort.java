@@ -3,24 +3,19 @@ package michaeljosh.RadixSort;
 import java.util.Random;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.atomic.AtomicIntegerArray;
-
-/**
- * @author Christian
- *         TODO: 1. Ta tiden.
- */
+import java.util.concurrent.atomic.AtomicLongArray;
 
 class ParaRadix {
-    int n;
-    int numberOfCores;
-    int[] a;
-    int[] b;
-    int globalMax = 0;
-    int numBit = 2;
-    int[][] allCount;
-    int[] sumCount;
-    int[][] countRange;
-    int[] partialSum;
+    long n;
+    long numberOfCores;
+    long[] a;
+    long[] b;
+    long globalMax = 0;
+    long numBit = 2;
+    long[][] allCount;
+    long[] sumCount;
+    long[][] countRange;
+    long[] partialSum;
     Thread[] t;
     CyclicBarrier cbMain;
     CyclicBarrier cb2;
@@ -28,50 +23,50 @@ class ParaRadix {
     CyclicBarrier cb4;
     CyclicBarrier cb6;
     CyclicBarrier cb9;
-    int bit1, bit2, mask, mask2;
+    long bit1, bit2, mask, mask2;
     long startTime, endTime, elapsedTime;
     double millisecs;
 
-    ParaRadix(final int n) {
+    ParaRadix(final long n) {
         this.n = n;
         numberOfCores = (Runtime.getRuntime().availableProcessors());
-        a = new int[n];
-        b = new int[n];
-        t = new Thread[numberOfCores];
-        partialSum = new int[numberOfCores];
-        countRange = new int[numberOfCores][2];
-        allCount = new int[numberOfCores][];
+        a = new long[(int) n];
+        b = new long[(int) n];
+        t = new Thread[(int) numberOfCores];
+        partialSum = new long[(int) numberOfCores];
+        countRange = new long[(int) numberOfCores][2];
+        allCount = new long[(int) numberOfCores][];
         fillArrayWithRand(); // Fills a[] with random numbers up to n.
 
-        cbMain = new CyclicBarrier(numberOfCores, new Runnable() {
+        cbMain = new CyclicBarrier((int) numberOfCores, new Runnable() {
             @Override
             public void run() {
 
                 // CHANGE: Only one thread is now finding numBit
                 // Finding numBit
-                while (globalMax >= (1 << numBit))
+                while (globalMax >= (1L << numBit))
                     numBit++; // antall siffer i max
 
                 bit1 = numBit / 2;
                 bit2 = numBit - bit1;
 
-                mask = (1 << bit1) - 1;
-                mask2 = (1 << bit2) - 1;
-                sumCount = new int[mask + 1];
+                mask = (1L << bit1) - 1;
+                mask2 = (1L << bit2) - 1;
+                sumCount = new long[(int) (mask + 1)];
             }
         });
 
-        cb2 = new CyclicBarrier(numberOfCores, new Runnable() {
+        cb2 = new CyclicBarrier((int) numberOfCores, new Runnable() {
             @Override
             public void run() {
                 // Calculating start and end -range for each thread in sumCount array.
 
                 // Implemented your suggested simplified code. Thanks! (Still with exclusive
                 // interval.)
-                int countPerThread = (mask + 1) / numberOfCores;
-                int countRest = (mask + 1) % numberOfCores;
-                int startCountIndex = 0;
-                int endCountIndex = countPerThread;
+                long countPerThread = (mask + 1) / numberOfCores;
+                long countRest = (mask + 1) % numberOfCores;
+                long startCountIndex = 0;
+                long endCountIndex = countPerThread;
 
                 for (int i = 0; i < numberOfCores; i++) {
                     if (countRest > 0) {
@@ -88,18 +83,18 @@ class ParaRadix {
             }
         });
 
-        cb3 = new CyclicBarrier(numberOfCores);
+        cb3 = new CyclicBarrier((int) numberOfCores);
 
-        cb4 = new CyclicBarrier(numberOfCores, new Runnable() {
+        cb4 = new CyclicBarrier((int) numberOfCores, new Runnable() {
             @Override
             public void run() {
                 // Initializing new sumcount for step2.
-                sumCount = new int[mask2 + 1];
+                sumCount = new long[(int) (mask2 + 1)];
             }
         });
 
         // This is the final barrier. It checks if array is sorted.
-        cb6 = new CyclicBarrier(numberOfCores, new Runnable() {
+        cb6 = new CyclicBarrier((int) numberOfCores, new Runnable() {
             @Override
             public void run() {
                 endTime = System.nanoTime();
@@ -111,17 +106,17 @@ class ParaRadix {
             }
         });
 
-        cb9 = new CyclicBarrier(numberOfCores, new Runnable() {
+        cb9 = new CyclicBarrier((int) numberOfCores, new Runnable() {
             @Override
             public void run() {
                 // Calculating start and end -range for each thread in sumCount array.
 
                 // Implemented your suggested simplified code. Thanks! (Still with exclusive
                 // interval.)
-                int countPerThread = (mask2 + 1) / numberOfCores;
-                int countRest = (mask2 + 1) % numberOfCores;
-                int startCountIndex = 0;
-                int endCountIndex = countPerThread;
+                long countPerThread = (mask2 + 1) / numberOfCores;
+                long countRest = (mask2 + 1) % numberOfCores;
+                long startCountIndex = 0;
+                long endCountIndex = countPerThread;
 
                 for (int i = 0; i < numberOfCores; i++) {
                     if (countRest > 0) {
@@ -140,7 +135,6 @@ class ParaRadix {
 
         startTime = System.nanoTime();
         findMax();
-
     }
 
     // Fills array with random numbers.
@@ -148,12 +142,12 @@ class ParaRadix {
         // System.out.println("Generating random numbers");
         Random r = new Random(45123);
         for (int i = 0; i < a.length; i++) {
-            a[i] = r.nextInt(n - 1);
+            a[i] = r.nextInt((int) n - 1);
         }
     }
 
     // Checks if an array is sorted from smallest to biggest.
-    boolean isSorted(int[] arr) {
+    boolean isSorted(long[] arr) {
         System.out.println("Is array successfully sorted?");
         for (int i = 0; i < arr.length - 1; i++) {
             if (arr[i] > arr[i + 1]) {
@@ -166,10 +160,10 @@ class ParaRadix {
 
     void findMax() {
 
-        int numPerThread = n / numberOfCores;
-        int numRest = n % numberOfCores;
-        int startIndex = 0;
-        int endIndex = numPerThread;
+        long numPerThread = n / numberOfCores;
+        long numRest = n % numberOfCores;
+        long startIndex = 0;
+        long endIndex = numPerThread;
 
         // Calculates start and end -index for each thread.
         for (int i = 0; i < numberOfCores; i++) {
@@ -182,27 +176,26 @@ class ParaRadix {
             startIndex = endIndex;
             endIndex += numPerThread;
         }
-
     }
 
-    synchronized void updateGlobalMaxValue(int i) {
+    synchronized void updateGlobalMaxValue(long i) {
         if (i > globalMax) {
             globalMax = i;
         }
     }
 
     class RadixThread implements Runnable {
-        int maxValue = 0;
-        int startIndex; // Start range to find max value in array.
-        int endIndex; // End range to find max value in array.
-        int countStartIndex;
-        int countEndIndex;
-        int[] count;
-        int threadNumber;
+        long maxValue = 0;
+        long startIndex; // Start range to find max value in array.
+        long endIndex; // End range to find max value in array.
+        long countStartIndex;
+        long countEndIndex;
+        long[] count;
+        long threadNumber;
         CyclicBarrier cb;
         CyclicBarrier cb2;
 
-        RadixThread(int startIndex, int endIndex, int[] a, CyclicBarrier cb, int threadNumber, CyclicBarrier cb2) {
+        RadixThread(long startIndex, long endIndex, long[] a, CyclicBarrier cb, long threadNumber, CyclicBarrier cb2) {
             this.startIndex = startIndex;
             this.endIndex = endIndex;
             this.cb = cb;
@@ -221,7 +214,7 @@ class ParaRadix {
             } catch (BrokenBarrierException ex) {
                 return;
             }
-            count = new int[mask + 1];
+            count = new long[(int) mask + 1];
             countFrequency(mask, 0, a);
 
             try {
@@ -233,8 +226,8 @@ class ParaRadix {
             }
 
             // Assigning indexes from countRange array.
-            countStartIndex = countRange[threadNumber][0];
-            countEndIndex = countRange[threadNumber][1];
+            countStartIndex = countRange[(int) threadNumber][0];
+            countEndIndex = countRange[(int) threadNumber][1];
             summize();
 
             try {
@@ -245,7 +238,7 @@ class ParaRadix {
                 return;
             }
 
-            acumValStepOne((mask + 1));
+            acumValStepOne((int) (mask + 1));
 
             try {
                 cb3.await(); // cb8
@@ -276,7 +269,7 @@ class ParaRadix {
             }
 
             // Ferdig med første del.
-            count = new int[mask2 + 1];
+            count = new long[(int) mask2 + 1];
             countFrequency(mask2, bit1, b);
 
             try {
@@ -286,8 +279,8 @@ class ParaRadix {
             } catch (BrokenBarrierException ex) {
                 return;
             }
-            countStartIndex = countRange[threadNumber][0];
-            countEndIndex = countRange[threadNumber][1];
+            countStartIndex = countRange[(int) threadNumber][0];
+            countEndIndex = countRange[(int) threadNumber][1];
             summize();
 
             try {
@@ -298,7 +291,7 @@ class ParaRadix {
                 return;
             }
 
-            acumValStepOne((mask2 + 1));
+            acumValStepOne((int) (mask2 + 1));
 
             try {
                 cb3.await(); // cb5
@@ -331,23 +324,23 @@ class ParaRadix {
         } // END Constructor for ParaFindMax
 
         void findLocalMax() {
-            for (int i = startIndex; i < endIndex + 1; i++) {
+            for (int i = (int) startIndex; i < endIndex + 1; i++) {
                 if (a[i] > maxValue)
                     maxValue = a[i];
             }
         }
 
-        void countFrequency(int mk, int shift, int[] arr) {
-            for (int i = startIndex; i < endIndex + 1; i++) {
-                count[(arr[i] >> shift) & mk]++;
+        void countFrequency(long mk, long shift, long[] arr) {
+            for (int i = (int) startIndex; i < endIndex + 1; i++) {
+                count[(int) ((arr[i] >> shift) & mk)]++;
             }
-            allCount[threadNumber] = count; // Henger count i den dobble arryen allCount.
+            allCount[(int) threadNumber] = count; // Henger count i den dobble arryen allCount.
         }
 
         void summize() {
             for (int i = 0; i < numberOfCores; i++) {
-                for (int k = countStartIndex; k < countEndIndex + 1; k++) {
-                    sumCount[k] = sumCount[k] + allCount[i][k];
+                for (int k = (int) countStartIndex; k < countEndIndex + 1; k++) {
+                    sumCount[k] = sumCount[k] + allCount[(int) i][k];
                 }
             }
         }
@@ -355,28 +348,28 @@ class ParaRadix {
         // Adds up values in threads' partition. Saves the sum in partitialSum[].
         void acumValStepOne(int arrSize) {
 
-            count = new int[arrSize];
+            count = new long[arrSize];
             int counter = 0;
-            int acumVal = 0;
+            long acumVal = 0;
             int j;
 
             if (threadNumber == 0) {
-                for (int i = countStartIndex; i < countEndIndex + 1; i++) {
-                    j = sumCount[i];
+                for (int i = (int) countStartIndex; i < countEndIndex + 1; i++) {
+                    j = (int) sumCount[i];
                     count[i] = acumVal;
                     acumVal += j;
                 }
-                count[countEndIndex + 1] = acumVal;
-                partialSum[threadNumber] = acumVal;
+                count[(int) countEndIndex + 1] = acumVal;
+                partialSum[(int) threadNumber] = acumVal;
             } else {
-                acumVal = sumCount[countStartIndex];
-                for (int k = countStartIndex; k < countEndIndex; k++) {
+                acumVal = sumCount[(int) countStartIndex];
+                for (int k = (int) countStartIndex; k < countEndIndex; k++) {
                     count[counter] = acumVal;
                     acumVal += sumCount[k + 1];
                     counter++;
                 }
                 count[counter] = acumVal;
-                partialSum[threadNumber] = count[counter];
+                partialSum[(int) threadNumber] = count[counter];
             }
 
         }
@@ -386,8 +379,8 @@ class ParaRadix {
         void acumValStepTwo() {
             int currVal;
             int counter = 0;
-            int countStart = countStartIndex;
-            int countEnd = countEndIndex;
+            int countStart = (int) countStartIndex;
+            int countEnd = (int) countEndIndex;
 
             if (threadNumber != 0) {
                 countStart++;
@@ -397,9 +390,9 @@ class ParaRadix {
             }
 
             for (int i = countStart; i <= countEnd; i++) {
-                currVal = count[counter];
+                currVal = (int) count[counter];
                 for (int k = 0; k < threadNumber; k++) {
-                    currVal += partialSum[k];
+                    currVal += (int) partialSum[k];
                 }
                 sumCount[i] = currVal;
 
@@ -410,18 +403,17 @@ class ParaRadix {
         }
 
         void findNumBit() {
-            while (maxValue >= (1 << numBit))
+            while (maxValue >= (1L << numBit))
                 numBit++; // antall siffer i max
         }
 
         // Move numbers in sorted order arr1 to arr2.
-        void moveNumbers(int[] arr1, int[] arr2, int mk, int shift) {
+        void moveNumbers(long[] arr1, long[] arr2, long mk, long shift) {
             for (int i = 0; i < arr1.length; i++) {
-                if (isOneOfMine(((arr1[i] >> shift) & mk))) {
-                    arr2[sumCount[(arr1[i] >> shift) & mk]++] = arr1[i];
+                if (isOneOfMine((int) ((arr1[i] >> shift) & mk))) {
+                    arr2[(int) sumCount[(int) ((arr1[i] >> shift) & mk)]++] = arr1[i];
                 }
             }
-
         }
 
         // Checks if given "pos" is current thread's property.
@@ -434,4 +426,27 @@ class ParaRadix {
 
     }
 
-}// end SekvensiellRadix
+    public static void main(String[] args) {
+        // Specify the size of the array
+        long arraySize = 1000000;
+
+        // Create an instance of ParaRadix
+        ParaRadix paraRadix = new ParaRadix(arraySize);
+
+        // Optional: Print the original array (commented out for large arrays)
+        // System.out.println("Original Array:");
+        // printArray(paraRadix.a);
+
+        // Time the sorting process
+        long startTime = System.nanoTime();
+        paraRadix.findMax();
+        long endTime = System.nanoTime();
+        double elapsedTime = (double) (endTime - startTime) / 1_000_000.0; // Convert nanoseconds to milliseconds
+
+        // Optional: Print the array after sorting (commented out for large arrays)
+        // System.out.println("Sorted Array:");
+        // printArray(paraRadix.a);
+
+        System.out.println("Sorting time: " + elapsedTime + " milliseconds");
+    }
+} // end ParaRadix
