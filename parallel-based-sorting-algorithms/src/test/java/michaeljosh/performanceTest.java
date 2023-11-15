@@ -8,7 +8,6 @@ import java.util.concurrent.ForkJoinPool;
 import static michaeljosh.brickSort.brickSort;
 import static michaeljosh.parallelBrickSort.parallelBrickSortArray;
 
-
 public class performanceTest {
 
     @Test
@@ -20,7 +19,7 @@ public class performanceTest {
         long array[] = new long[arraySize];
         MergeSortUtil.arrayInit(array, 20);
 
-        // Custom sequential merge sort
+        // Custom sequential bitonic sort
         long sequentialTotalTime = 0;
         for (int i = 0; i < iterations; i++) {
             long startTime = System.currentTimeMillis();
@@ -35,21 +34,7 @@ public class performanceTest {
         double sequentialMeanTime = (double) sequentialTotalTime / iterations;
         System.out.println("Mean Custom sequential sorting time: " + sequentialMeanTime);
 
-        // System parallel sort
-        long systemParallelTotalTime = 0;
-        for (int i = 0; i < iterations; i++) {
-            long startTime = System.currentTimeMillis();
-            long systemParallelCopy[] = Arrays.copyOf(array, array.length);
-            Arrays.parallelSort(systemParallelCopy);
-            long duration = System.currentTimeMillis() - startTime;
-            // MergeSortUtil.isSorted(systemParallelCopy);
-            systemParallelTotalTime += duration;
-            System.out.println("System sorting time (Iteration " + (i + 1) + "): " + duration);
-        }
-        double systemParallelMeanTime = (double) systemParallelTotalTime / iterations;
-        System.out.println("Mean System sorting time: " + systemParallelMeanTime);
-
-        // Custom parallel merge sort
+        // Custom bitonic sort
         long customParallelTotalTime = 0;
         for (int i = 0; i < iterations; i++) {
             long startTime = System.currentTimeMillis();
@@ -69,7 +54,7 @@ public class performanceTest {
     }
 
     @Test
-    public void brickSortTest(){
+    public void brickSortTest() {
         int numberOfThreads = 4;
         int arraySize = 800000;
         int iterations = 1;
@@ -77,7 +62,7 @@ public class performanceTest {
         long array[] = new long[arraySize];
         MergeSortUtil.arrayInit(array, 20);
 
-        // Custom sequential merge sort
+        // Custom sequential brick sort
         long sequentialTotalTime = 0;
         for (int i = 0; i < iterations; i++) {
             long sequentialCopy[] = Arrays.copyOf(array, array.length);
@@ -91,21 +76,7 @@ public class performanceTest {
         double sequentialMeanTime = (double) sequentialTotalTime / iterations;
         System.out.println("Mean Custom sequential sorting time: " + sequentialMeanTime);
 
-        // System parallel sort
-        long systemParallelTotalTime = 0;
-        for (int i = 0; i < iterations; i++) {
-            long systemParallelCopy[] = Arrays.copyOf(array, array.length);
-            long startTime = System.currentTimeMillis();
-            Arrays.parallelSort(systemParallelCopy);
-            long duration = System.currentTimeMillis() - startTime;
-            // MergeSortUtil.isSorted(systemParallelCopy);
-            systemParallelTotalTime += duration;
-            System.out.println("System sorting time (Iteration " + (i + 1) + "): " + duration);
-        }
-        double systemParallelMeanTime = (double) systemParallelTotalTime / iterations;
-        System.out.println("Mean System sorting time: " + systemParallelMeanTime);
-
-        // Custom parallel merge sort
+        // Custom brick sort
         long customParallelTotalTime = 0;
         for (int i = 0; i < iterations; i++) {
             long customParallelCopy[] = Arrays.copyOf(array, array.length);
@@ -123,4 +94,3 @@ public class performanceTest {
 
     }
 }
-
