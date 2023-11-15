@@ -159,35 +159,54 @@ public class ParallelMergeSort extends Thread {
 
     public static void main(String args[]) {
         int numberOfThreads = 4;
-        int arraySize = 10000000;
-        long array[] = new long[arraySize];
+        int arraySize = 500000;
+        int iterations = 10;
 
+        long array[] = new long[arraySize];
         MergeSortUtil.arrayInit(array, 20);
 
-        long startTime = System.currentTimeMillis();
-
         // Custom sequential merge sort
-        long sequentialCopy[] = Arrays.copyOf(array, array.length);
-        SequentialMergeSort.mergeSort(sequentialCopy);
-        long duration = System.currentTimeMillis() - startTime;
-        System.out.println("Custom sequential sorting time: " + duration);
+        long sequentialTotalTime = 0;
+        for (int i = 0; i < iterations; i++) {
+            long startTime = System.currentTimeMillis();
+            long sequentialCopy[] = Arrays.copyOf(array, array.length);
+            SequentialMergeSort.mergeSort(sequentialCopy);
+            long duration = System.currentTimeMillis() - startTime;
+            // MergeSortUtil.isSorted(sequentialCopy);
+            sequentialTotalTime += duration;
+            System.out.println("Custom sequential sorting time (Iteration " + (i + 1) + "): " + duration);
+        }
+        double sequentialMeanTime = (double) sequentialTotalTime / iterations;
+        System.out.println("Mean Custom sequential sorting time: " + sequentialMeanTime);
 
-        startTime = System.currentTimeMillis();
-        // Create a new copy for system parallel sort
-        long systemParallelCopy[] = Arrays.copyOf(array, array.length);
-        Arrays.parallelSort(systemParallelCopy);
-        duration = System.currentTimeMillis() - startTime;
-        System.out.println("System sorting time: " + duration);
+        // System parallel sort
+        long systemParallelTotalTime = 0;
+        for (int i = 0; i < iterations; i++) {
+            long startTime = System.currentTimeMillis();
+            long systemParallelCopy[] = Arrays.copyOf(array, array.length);
+            Arrays.parallelSort(systemParallelCopy);
+            long duration = System.currentTimeMillis() - startTime;
+            // MergeSortUtil.isSorted(systemParallelCopy);
+            systemParallelTotalTime += duration;
+            System.out.println("System sorting time (Iteration " + (i + 1) + "): " + duration);
+        }
+        double systemParallelMeanTime = (double) systemParallelTotalTime / iterations;
+        System.out.println("Mean System sorting time: " + systemParallelMeanTime);
 
         // Custom parallel merge sort
-        startTime = System.currentTimeMillis();
-        // Create a new copy for custom parallel sort
-        long customParallelCopy[] = Arrays.copyOf(array, array.length);
-        parallelMergeSort(customParallelCopy, numberOfThreads);
-        duration = System.currentTimeMillis() - startTime;
-        System.out.println("Custom parallel sorting time: " + duration);
+        long customParallelTotalTime = 0;
+        for (int i = 0; i < iterations; i++) {
+            long startTime = System.currentTimeMillis();
+            long customParallelCopy[] = Arrays.copyOf(array, array.length);
+            parallelMergeSort(customParallelCopy, numberOfThreads);
+            long duration = System.currentTimeMillis() - startTime;
+            // MergeSortUtil.isSorted(customParallelCopy);
+            customParallelTotalTime += duration;
+            System.out.println("Custom parallel sorting time (Iteration " + (i + 1) + "): " + duration);
+        }
+        double customParallelMeanTime = (double) customParallelTotalTime / iterations;
+        System.out.println("Mean Custom parallel sorting time: " + customParallelMeanTime);
 
-        MergeSortUtil.isSorted(array);
         System.out.println("Main thread has finished.");
     }
 }
