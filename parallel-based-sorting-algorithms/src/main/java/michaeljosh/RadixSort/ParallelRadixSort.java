@@ -1,452 +1,340 @@
 package michaeljosh.RadixSort;
 
+import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.atomic.AtomicLongArray;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
-class ParaRadix {
-    long n;
-    long numberOfCores;
-    long[] a;
-    long[] b;
-    long globalMax = 0;
-    long numBit = 2;
-    long[][] allCount;
-    long[] sumCount;
-    long[][] countRange;
-    long[] partialSum;
-    Thread[] t;
-    CyclicBarrier cbMain;
-    CyclicBarrier cb2;
-    CyclicBarrier cb3;
-    CyclicBarrier cb4;
-    CyclicBarrier cb6;
-    CyclicBarrier cb9;
-    long bit1, bit2, mask, mask2;
-    long startTime, endTime, elapsedTime;
-    double millisecs;
+/***********************************************************
+ * Oblig 3 - sekvensiell kode, INF2440 v2017. Ifi, Uio, Arne Maus for store
+ * verdier av n > 100 m, kjør (f.eks): >java -Xmx16000m MultiRadix 1000000000
+ ************************************************************/
 
-    ParaRadix(final long n) {
-        this.n = n;
-        numberOfCores = (Runtime.getRuntime().availableProcessors());
-        a = new long[(int) n];
-        b = new long[(int) n];
-        t = new Thread[(int) numberOfCores];
-        partialSum = new long[(int) numberOfCores];
-        countRange = new long[(int) numberOfCores][2];
-        allCount = new long[(int) numberOfCores][];
-        fillArrayWithRand(); // Fills a[] with random numbers up to n.
+public class ParallelRadixSort {
+    long[] a; // Change from int to long
+    int n;
+    boolean debug = false;
+    long max = 0; // Change from int to long
+    final static int NUM_BIT = 8; // alle tall 6-11 .. finn ut hvilken verdi som
+                                  // er best
 
-        cbMain = new CyclicBarrier((int) numberOfCores, new Runnable() {
-            @Override
-            public void run() {
+    int antTraader = Runtime.getRuntime().availableProcessors();
+    CyclicBarrier cb = new CyclicBarrier(antTraader + 1);
 
-                // CHANGE: Only one thread is now finding numBit
-                // Finding numBit
-                while (globalMax >= (1L << numBit))
-                    numBit++; // antall siffer i max
+    private synchronized void setMax(long newMax) { // Change from int to long
+        max = newMax;
+    }
 
-                bit1 = numBit / 2;
-                bit2 = numBit - bit1;
+    private void init(long[] a) { // Change from int to long
+        this.a = a;
+        this.n = a.length;
 
-                mask = (1L << bit1) - 1;
-                mask2 = (1L << bit2) - 1;
-                sumCount = new long[(int) (mask + 1)];
-            }
-        });
+        // DEL A.
+        // Find largest integer.
+        int start = 0;
+        int end = n / antTraader;
 
-        cb2 = new CyclicBarrier((int) numberOfCores, new Runnable() {
-            @Override
-            public void run() {
-                // Calculating start and end -range for each thread in sumCount array.
+        for (int i = 0; i < antTraader; i++) {
+            Thread t = new Thread(new Runnable() {
+                private long localMax = 0; // Change from int to long
+                private int localStart, localEnd;
+                private long[] a; // Change from int to long
 
-                // Implemented your suggested simplified code. Thanks! (Still with exclusive
-                // interval.)
-                long countPerThread = (mask + 1) / numberOfCores;
-                long countRest = (mask + 1) % numberOfCores;
-                long startCountIndex = 0;
-                long endCountIndex = countPerThread;
-
-                for (int i = 0; i < numberOfCores; i++) {
-                    if (countRest > 0) {
-                        endCountIndex++;
-                        countRest--;
+                @Override
+                public void run() {
+                    for (int j = localStart; j < localEnd; j++) {
+                        if (a[j] > localMax) {
+                            localMax = a[j];
+                        }
                     }
-
-                    countRange[i][0] = startCountIndex;
-                    countRange[i][1] = endCountIndex - 1;
-                    startCountIndex = endCountIndex;
-                    endCountIndex += countPerThread;
-                }
-
-            }
-        });
-
-        cb3 = new CyclicBarrier((int) numberOfCores);
-
-        cb4 = new CyclicBarrier((int) numberOfCores, new Runnable() {
-            @Override
-            public void run() {
-                // Initializing new sumcount for step2.
-                sumCount = new long[(int) (mask2 + 1)];
-            }
-        });
-
-        // This is the final barrier. It checks if array is sorted.
-        cb6 = new CyclicBarrier((int) numberOfCores, new Runnable() {
-            @Override
-            public void run() {
-                endTime = System.nanoTime();
-                elapsedTime = endTime - startTime;
-                millisecs = (double) elapsedTime / 1000000.0;
-                System.out
-                        .println("\nRadix sort av " + n + " tall tok: " + millisecs + " millisek i parallell løsning.");
-                System.out.println(isSorted(a));
-            }
-        });
-
-        cb9 = new CyclicBarrier((int) numberOfCores, new Runnable() {
-            @Override
-            public void run() {
-                // Calculating start and end -range for each thread in sumCount array.
-
-                // Implemented your suggested simplified code. Thanks! (Still with exclusive
-                // interval.)
-                long countPerThread = (mask2 + 1) / numberOfCores;
-                long countRest = (mask2 + 1) % numberOfCores;
-                long startCountIndex = 0;
-                long endCountIndex = countPerThread;
-
-                for (int i = 0; i < numberOfCores; i++) {
-                    if (countRest > 0) {
-                        endCountIndex++;
-                        countRest--;
+                    try {
+                        setMax(localMax);
+                        cb.await();
+                    } catch (BrokenBarrierException | InterruptedException e) {
+                        System.out.println("Error " + e.getMessage());
+                        e.printStackTrace();
                     }
-
-                    countRange[i][0] = startCountIndex;
-                    countRange[i][1] = endCountIndex - 1;
-                    startCountIndex = endCountIndex;
-                    endCountIndex += countPerThread;
                 }
 
-            }
-        });
+                private Runnable initFinnMax(long[] a, int start, int end) { // Change from int to long
+                    this.localStart = start;
+                    this.localEnd = end;
+                    this.a = a;
+                    return this;
+                }
+            }.initFinnMax(a, start, end));
 
-        startTime = System.nanoTime();
-        findMax();
-    }
+            t.start();
+            start = end;
+            end = (i == (antTraader - 2) ? n : end + (n / antTraader));
+        }
 
-    // Fills array with random numbers.
-    void fillArrayWithRand() {
-        // System.out.println("Generating random numbers");
-        Random r = new Random(45123);
-        for (int i = 0; i < a.length; i++) {
-            a[i] = r.nextInt((int) n - 1);
+        try {
+            cb.await();
+        } catch (BrokenBarrierException | InterruptedException e) {
+            System.out.println("Error " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    // Checks if an array is sorted from smallest to biggest.
-    boolean isSorted(long[] arr) {
-        System.out.println("Is array successfully sorted?");
-        for (int i = 0; i < arr.length - 1; i++) {
-            if (arr[i] > arr[i + 1]) {
-                System.out.println("Error: Array was not successfully sorted. Error triggered at index " + i + ".");
-                return false;
-            }
+    public long[] radixMulti(long[] a) { // Change from int to long
+
+        // 1-5 digit radixSort of : a[]
+        int numBit = 2, numDigits;
+        int[] bit;
+
+        // Inital setup. Will set up class variables.
+        // Includes parallelized part A.
+        init(a);
+
+        // antall binaere siffer i max
+        while (max >= (1L << numBit)) { // Change from int to long
+            numBit++;
         }
-        return true;
+
+        // bestem antall bit i numBits sifre
+        numDigits = Math.max(1, numBit / NUM_BIT);
+        bit = new int[numDigits];
+        int rest = (numBit % numDigits), sum = 0;
+
+        // fordel bitene vi skal sortere paa jevnt
+        for (int i = 0; i < bit.length; i++) {
+            bit[i] = numBit / numDigits;
+            if (rest-- > 0)
+                bit[i]++;
+        }
+
+        long[] t = a, b = new long[n]; // Change from int to long
+
+        for (int i = 0; i < bit.length; i++) {
+            radixSort(a, b, bit[i], sum); // i-te siffer fra a[] til b[]
+            sum += bit[i];
+            // swap arrays (pointers only)
+            t = a;
+            a = b;
+            b = t;
+        }
+        if (bit.length % 2 != 0) {
+            // et odde antall sifre, kopier innhold tilbake til original a[] (nå
+            // b)
+            System.arraycopy(a, 0, b, 0, a.length);
+        }
+        return a;
     }
 
-    void findMax() {
+    /**
+     * Sort a[] on one digit ; number of bits = maskLen, shiftet up 'shift' bits
+     */
 
-        long numPerThread = n / numberOfCores;
-        long numRest = n % numberOfCores;
-        long startIndex = 0;
-        long endIndex = numPerThread;
+    private void radixSort(long[] a, long[] b, int maskLen, int shift) { // Change from int to long
+        int mask = (1 << maskLen) - 1;
+        long acumVal = 0; // Change from int to long
+        int numSif = mask + 1;
+        int k = n / antTraader;
+        CyclicBarrier synk = new CyclicBarrier(antTraader);
 
-        // Calculates start and end -index for each thread.
-        for (int i = 0; i < numberOfCores; i++) {
-            if (numRest > 0) {
-                endIndex++;
-                numRest--;
-            }
-            (t[i] = new Thread(new RadixThread(startIndex, (endIndex - 1), a, cbMain, i, cb2))).start(); // Starting
-                                                                                                         // thread.
-            startIndex = endIndex;
-            endIndex += numPerThread;
-        }
-    }
-
-    synchronized void updateGlobalMaxValue(long i) {
-        if (i > globalMax) {
-            globalMax = i;
-        }
-    }
-
-    class RadixThread implements Runnable {
-        long maxValue = 0;
-        long startIndex; // Start range to find max value in array.
-        long endIndex; // End range to find max value in array.
-        long countStartIndex;
-        long countEndIndex;
-        long[] count;
-        long threadNumber;
-        CyclicBarrier cb;
-        CyclicBarrier cb2;
-
-        RadixThread(long startIndex, long endIndex, long[] a, CyclicBarrier cb, long threadNumber, CyclicBarrier cb2) {
-            this.startIndex = startIndex;
-            this.endIndex = endIndex;
-            this.cb = cb;
-            this.threadNumber = threadNumber;
-            this.cb2 = cb2;
+        if (debug) {
+            System.out.printf("maskLen: %d, mask: %d, shift: %d%n",
+                    maskLen, mask, shift);
+            System.out.printf("n: %d, numSif: %d, antTråder: %d, k: %d%n",
+                    n, numSif, antTraader, k);
         }
 
-        public void run() {
-            findLocalMax();
-            updateGlobalMaxValue(maxValue);
+        int[][] allCount = new int[antTraader][];
 
-            try {
-                cb.await();
-            } catch (InterruptedException ex) {
-                return;
-            } catch (BrokenBarrierException ex) {
-                return;
-            }
-            count = new long[(int) mask + 1];
-            countFrequency(mask, 0, a);
+        // Worker class for B.
+        class CountWorker implements Runnable {
+            int start, end;
+            int[] count;
+            int threadId;
 
-            try {
-                cb2.await();
-            } catch (InterruptedException ex) {
-                return;
-            } catch (BrokenBarrierException ex) {
-                return;
+            public CountWorker(int start, int end, int threadId) {
+                this.threadId = threadId;
+                this.start = start;
+                this.end = end;
+                this.count = new int[numSif];
+                threadId++;
             }
 
-            // Assigning indexes from countRange array.
-            countStartIndex = countRange[(int) threadNumber][0];
-            countEndIndex = countRange[(int) threadNumber][1];
-            summize();
+            public void run() {
+                // Extract relevant bits.
+                for (int i = start; i < end; i++) {
+                    count[(int) ((a[i] >>> shift) & mask)]++; // Change from int to long
+                }
+                // Put into global 2 dimentional array. Thread x digit.
+                // The location specifies the digit count for the specified thread.
+                allCount[threadId] = count;
 
-            try {
-                cb3.await();
-            } catch (InterruptedException ex) {
-                return;
-            } catch (BrokenBarrierException ex) {
-                return;
-            }
+                try {
+                    synk.await();
+                } catch (InterruptedException | BrokenBarrierException e) {
+                    System.out.println("Error " + e.getMessage());
+                    e.printStackTrace();
+                }
 
-            acumValStepOne((int) (mask + 1));
+                // Reset count array to ready it for accumulated values.
+                count = new int[numSif];
 
-            try {
-                cb3.await(); // cb8
-            } catch (InterruptedException ex) {
-                return;
-            } catch (BrokenBarrierException ex) {
-                return;
-            }
+                for (int t = 0; t < numSif; t++) {
+                    // Sum all threads and digits before the current digit.
+                    for (int threadIndex = 0; threadIndex < antTraader; threadIndex++) {
+                        for (int digit = 0; digit < t; digit++) {
+                            count[t] += allCount[threadIndex][digit];
+                        }
+                    }
+                    // Sum for all threads before current thread.
+                    for (int threadIndex = 0; threadIndex < threadId; threadIndex++) {
+                        count[t] += allCount[threadIndex][t];
+                    }
+                }
 
-            acumValStepTwo();
+                // d) move numbers in sorted order a to b
+                for (int i = start; i < end; i++) {
+                    b[count[(int) ((a[i] >>> shift) & mask)]++] = a[i]; // Change from int to long
+                }
 
-            try {
-                cb3.await(); // cb8
-            } catch (InterruptedException ex) {
-                return;
-            } catch (BrokenBarrierException ex) {
-                return;
-            }
-
-            moveNumbers(a, b, mask, 0);
-
-            try {
-                cb4.await();
-            } catch (InterruptedException ex) {
-                return;
-            } catch (BrokenBarrierException ex) {
-                return;
-            }
-
-            // Ferdig med første del.
-            count = new long[(int) mask2 + 1];
-            countFrequency(mask2, bit1, b);
-
-            try {
-                cb9.await();
-            } catch (InterruptedException ex) {
-                return;
-            } catch (BrokenBarrierException ex) {
-                return;
-            }
-            countStartIndex = countRange[(int) threadNumber][0];
-            countEndIndex = countRange[(int) threadNumber][1];
-            summize();
-
-            try {
-                cb3.await(); // cb5
-            } catch (InterruptedException ex) {
-                return;
-            } catch (BrokenBarrierException ex) {
-                return;
-            }
-
-            acumValStepOne((int) (mask2 + 1));
-
-            try {
-                cb3.await(); // cb5
-            } catch (InterruptedException ex) {
-                return;
-            } catch (BrokenBarrierException ex) {
-                return;
-            }
-
-            acumValStepTwo();
-
-            try {
-                cb3.await(); // cb 7
-            } catch (InterruptedException ex) {
-                return;
-            } catch (BrokenBarrierException ex) {
-                return;
-            }
-
-            moveNumbers(b, a, mask2, bit1);
-
-            try {
-                cb6.await();
-            } catch (InterruptedException ex) {
-                return;
-            } catch (BrokenBarrierException ex) {
-                return;
-            }
-
-        } // END Constructor for ParaFindMax
-
-        void findLocalMax() {
-            for (int i = (int) startIndex; i < endIndex + 1; i++) {
-                if (a[i] > maxValue)
-                    maxValue = a[i];
-            }
-        }
-
-        void countFrequency(long mk, long shift, long[] arr) {
-            for (int i = (int) startIndex; i < endIndex + 1; i++) {
-                count[(int) ((arr[i] >> shift) & mk)]++;
-            }
-            allCount[(int) threadNumber] = count; // Henger count i den dobble arryen allCount.
-        }
-
-        void summize() {
-            for (int i = 0; i < numberOfCores; i++) {
-                for (int k = (int) countStartIndex; k < countEndIndex + 1; k++) {
-                    sumCount[k] = sumCount[k] + allCount[(int) i][k];
+                try {
+                    // vent til den parallele delen er ferdig.
+                    cb.await();
+                } catch (InterruptedException | BrokenBarrierException e) {
+                    System.out.println("Error " + e.getMessage());
+                    e.printStackTrace();
                 }
             }
         }
 
-        // Adds up values in threads' partition. Saves the sum in partitialSum[].
-        void acumValStepOne(int arrSize) {
+        // Start of algorithem.
+        int start = 0;
+        int end = k;
 
-            count = new long[arrSize];
-            int counter = 0;
-            long acumVal = 0;
-            int j;
-
-            if (threadNumber == 0) {
-                for (int i = (int) countStartIndex; i < countEndIndex + 1; i++) {
-                    j = (int) sumCount[i];
-                    count[i] = acumVal;
-                    acumVal += j;
-                }
-                count[(int) countEndIndex + 1] = acumVal;
-                partialSum[(int) threadNumber] = acumVal;
-            } else {
-                acumVal = sumCount[(int) countStartIndex];
-                for (int k = (int) countStartIndex; k < countEndIndex; k++) {
-                    count[counter] = acumVal;
-                    acumVal += sumCount[k + 1];
-                    counter++;
-                }
-                count[counter] = acumVal;
-                partialSum[(int) threadNumber] = count[counter];
+        for (int i = 0; i < antTraader; i++) {
+            if (debug) {
+                System.out.println("Starging thread with " + start + " end: " + end);
             }
 
+            Thread t = new Thread(new CountWorker(start, end, i));
+            t.start();
+            start = end;
+            end = (i + 2 == antTraader ? n : end + k);
         }
+        try {
+            // vent til den parallele delen er ferdig.
+            cb.await();
+        } catch (InterruptedException | BrokenBarrierException e) {
+            System.out.println("Error " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
-        // Adds conditional sums from partitialSum[] to threads counts and adds to
-        // global sumCount array.
-        void acumValStepTwo() {
-            int currVal;
-            int counter = 0;
-            int countStart = (int) countStartIndex;
-            int countEnd = (int) countEndIndex;
-
-            if (threadNumber != 0) {
-                countStart++;
-                countEnd++;
-            } else {
-                countEnd++;
-            }
-
-            for (int i = countStart; i <= countEnd; i++) {
-                currVal = (int) count[counter];
-                for (int k = 0; k < threadNumber; k++) {
-                    currVal += (int) partialSum[k];
-                }
-                sumCount[i] = currVal;
-
-                counter++;
-                if (i + 1 == sumCount.length)
-                    return;
+    void testSort(long[] a) { // Change from int to long
+        for (int i = 0; i < a.length - 1; i++) {
+            if (a[i] > a[i + 1]) {
+                System.out.println("SorteringsFEIL på plass: " + i + " a[" + i + "]:" + a[i] + " > a[" + (i + 1) + "]:"
+                        + a[i + 1]);
+                return;
             }
         }
+    }
 
-        void findNumBit() {
-            while (maxValue >= (1L << numBit))
-                numBit++; // antall siffer i max
+    private void initArrayRandom(int len) {
+        init(new long[len]); // Change from int to long
+        Random r = new Random(123);
+        for (int i = 0; i < n; i++) {
+            this.a[i] = r.nextInt(n);
         }
+    }
 
-        // Move numbers in sorted order arr1 to arr2.
-        void moveNumbers(long[] arr1, long[] arr2, long mk, long shift) {
-            for (int i = 0; i < arr1.length; i++) {
-                if (isOneOfMine((int) ((arr1[i] >> shift) & mk))) {
-                    arr2[(int) sumCount[(int) ((arr1[i] >> shift) & mk)]++] = arr1[i];
-                }
-            }
-        }
-
-        // Checks if given "pos" is current thread's property.
-        boolean isOneOfMine(int pos) {
-            if (pos >= countStartIndex && pos <= countEndIndex) {
-                return true;
-            }
-            return false;
-        }
+    public void doBenchmark(int n) {
+        System.out.printf("Running parallel benchmark with \t n = %d.%n", n);
+        System.out.printf("\t\t Number_of_threads = %d.%n", antTraader);
+        initArrayRandom(n);
+        long tt = System.nanoTime();
+        radixMulti(a);
+        double tid = (System.nanoTime() - tt) / 1000000.0;
+        System.out.printf("Sorted %d numbers with \t\t time = %f millisek.%n", n, tid);
+        testSort(a);
 
     }
 
-    public static void main(String[] args) {
-        // Specify the size of the array
-        long arraySize = 1000000;
-
-        // Create an instance of ParaRadix
-        ParaRadix paraRadix = new ParaRadix(arraySize);
-
-        // Optional: Print the original array (commented out for large arrays)
-        // System.out.println("Original Array:");
-        // printArray(paraRadix.a);
-
-        // Time the sorting process
-        long startTime = System.nanoTime();
-        paraRadix.findMax();
-        long endTime = System.nanoTime();
-        double elapsedTime = (double) (endTime - startTime) / 1_000_000.0; // Convert nanoseconds to milliseconds
-
-        // Optional: Print the array after sorting (commented out for large arrays)
-        // System.out.println("Sorted Array:");
-        // printArray(paraRadix.a);
-
-        System.out.println("Sorting time: " + elapsedTime + " milliseconds");
+    public static void writeArr(String filename, long[] x) { // Change from int to long
+        BufferedWriter outputWriter = null;
+        try {
+            outputWriter = new BufferedWriter(new FileWriter(filename));
+            outputWriter.write(Arrays.toString(x));
+            outputWriter.flush();
+            outputWriter.close();
+        } catch (IOException e) {
+            System.out.println("Error " + e.getMessage());
+            e.printStackTrace();
+        }
     }
-} // end ParaRadix
+
+    public static void write2dArr(String filename, int[][] x) {
+        BufferedWriter outputWriter = null;
+        try {
+            outputWriter = new BufferedWriter(new FileWriter(filename));
+            outputWriter.write(Arrays.deepToString(x).replace("], ", "]\n"));
+            outputWriter.flush();
+            outputWriter.close();
+        } catch (IOException e) {
+            System.out.println("Error " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeNumber(String filename, double num) {
+        BufferedWriter outputWriter = null;
+        try {
+            outputWriter = new BufferedWriter(new FileWriter(filename));
+            outputWriter.write(new Double(num).toString());
+            outputWriter.flush();
+            outputWriter.close();
+        } catch (IOException e) {
+            System.out.println("Error " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String args[]) {
+        int numberOfThreads = 4;
+        int arraySize = 2000000;
+        int iterations = 10;
+
+        long array[] = new long[arraySize];
+        // MergeSortUtil.arrayInit(array, 20); // This line is commented out as the code
+        // for MergeSortUtil is not provided
+
+        // Custom sequential merge sort
+        long sequentialTotalTime = 0;
+        for (int i = 0; i < iterations; i++) {
+            long startTime = System.currentTimeMillis();
+            long sequentialCopy[] = Arrays.copyOf(array, array.length);
+            SequentialRadixSort.radixSort(sequentialCopy);
+            long duration = System.currentTimeMillis() - startTime;
+            sequentialTotalTime += duration;
+            System.out.println("Custom sequential sorting time (Iteration " + (i + 1) + "): " + duration);
+        }
+        double sequentialMeanTime = (double) sequentialTotalTime / iterations;
+        System.out.println("Mean Custom sequential sorting time: " + sequentialMeanTime);
+
+        // Custom parallel Radix Sort
+        ParallelRadixSort radixSort = new ParallelRadixSort();
+        long radixSortTotalTime = 0;
+        for (int i = 0; i < iterations; i++) {
+            long startTime = System.currentTimeMillis();
+            long[] radixSortCopy = Arrays.copyOf(array, array.length);
+            radixSort.radixMulti(radixSortCopy);
+            long duration = System.currentTimeMillis() - startTime;
+            radixSortTotalTime += duration;
+            System.out.println("Custom parallel Radix Sort sorting time (Iteration " + (i + 1) + "): " + duration);
+        }
+        double radixSortMeanTime = (double) radixSortTotalTime / iterations;
+        System.out.println("Mean Custom parallel Radix Sort sorting time: " + radixSortMeanTime);
+
+        System.out.println("Main thread has finished.");
+    }
+
+}// SekvensiellRadix
