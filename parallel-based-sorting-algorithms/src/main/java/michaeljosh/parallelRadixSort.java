@@ -1,6 +1,5 @@
 package michaeljosh;
 
-<<<<<<< HEAD
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -150,7 +149,6 @@ class OMPRadixSort implements Callable<Void> {
         }
     }
 }
-=======
 import java.util.Random;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.BrokenBarrierException;
@@ -449,4 +447,3 @@ public class parallelRadixSort {
     }
 
 }// SekvensiellRadix
->>>>>>> ac7df8bbd9c598c0bc22cb26a8853c9ea65194f1

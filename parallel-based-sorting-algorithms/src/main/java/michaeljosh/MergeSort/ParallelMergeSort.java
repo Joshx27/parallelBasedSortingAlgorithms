@@ -174,7 +174,7 @@ public class ParallelMergeSort extends Thread {
         System.out.println("Custom sequential sorting time: " + duration);
 
         startTime = System.currentTimeMillis();
-        Arrays.parallelSort(array2); // system parallel sort
+        Arrays.parallelSort(array); // system parallel sort
         duration = System.currentTimeMillis() - startTime;
         System.out.println("System sorting time: " + duration);
 
