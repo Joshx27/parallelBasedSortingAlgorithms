@@ -300,7 +300,7 @@ public class ParallelRadixSort {
 
     public static void main(String args[]) {
         int numberOfThreads = 4;
-        int arraySize = 2000000;
+        int arraySize = 100000000;
         int iterations = 10;
 
         long array[] = new long[arraySize];
