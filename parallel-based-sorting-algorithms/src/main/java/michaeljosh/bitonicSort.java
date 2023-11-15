@@ -3,10 +3,10 @@ package michaeljosh;
 import java.util.Arrays;
 
 public class bitonicSort {
-    private int[] a;
+    private long[] a;
     private final static boolean ASCENDING = true; // sorting direction
 
-    public void sort(int[] a) {
+    public void sort(long[] a) {
         this.a = a;
         bitonicSort(0, a.length, ASCENDING);
     }
@@ -36,7 +36,7 @@ public class bitonicSort {
     }
 
     private void exchange(int i, int j) {
-        int t = a[i];
+        long t = a[i];
         a[i] = a[j];
         a[j] = t;
     }
@@ -50,7 +50,7 @@ public class bitonicSort {
     }
 
     public static void main(String args[]) {
-        int a[] = { 3, 7, 6, 2, 1 };
+        long a[] = { 3, 7, 6, 2, 1 };
         bitonicSort ob = new bitonicSort();
         ob.sort(a);
         System.out.println("\nSorted array");

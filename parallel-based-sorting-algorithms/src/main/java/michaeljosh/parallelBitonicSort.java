@@ -6,13 +6,13 @@ import java.util.concurrent.RecursiveAction;
 
 public class parallelBitonicSort extends RecursiveAction {
     private static final long serialVersionUID = 1L;
-    private int[] a;
+    private long[] a;
     private int lo, n;
     private boolean dir;
 
     private static final int THRESHOLD = 4; // Threshold for parallelization
 
-    public parallelBitonicSort(int[] a, int lo, int n, boolean dir) {
+    public parallelBitonicSort(long[] a, int lo, int n, boolean dir) {
         this.a = a;
         this.lo = lo;
         this.n = n;
@@ -64,7 +64,7 @@ public class parallelBitonicSort extends RecursiveAction {
     }
 
     private void exchange(int i, int j) {
-        int t = a[i];
+        long t = a[i];
         a[i] = a[j];
         a[j] = t;
     }
@@ -80,7 +80,7 @@ public class parallelBitonicSort extends RecursiveAction {
     // Rest of the code remains the same
 
     public static void main(String args[]) {
-        int a[] = { 3, 7, 6, 2, 1 };
+        long a[] = { 3, 7, 6, 2, 1 };
         parallelBitonicSort ob = new parallelBitonicSort(a, 0, a.length, true);
         ForkJoinPool pool = new ForkJoinPool();
         pool.invoke(ob);
