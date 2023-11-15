@@ -1,8 +1,8 @@
-package michaeljosh;
+package michaeljosh.RadixSort;
 
 import java.util.Arrays;
 
-public class radixSort {
+public class SequentialRadixSort {
 
     public static void radixSort(int arr[]) {
         if (arr == null || arr.length == 0) {

@@ -159,7 +159,7 @@ public class ParallelMergeSort extends Thread {
 
     public static void main(String args[]) {
         int numberOfThreads = 4;
-        int arraySize = 500000;
+        int arraySize = 50000;
         int iterations = 10;
 
         long array[] = new long[arraySize];
