@@ -1,4 +1,4 @@
-package michaeljosh;
+package michaeljosh.MergeSort;
 
 /**
  * Copyright 2017 Ahmet Uyar
@@ -34,7 +34,7 @@ package michaeljosh;
  * @author Ahmet Uyar
  */
 
-public class parallelMergeSort {
+public class MergeSortUtil {
 
     /**
      * merge two sorted subarrays
@@ -241,7 +241,7 @@ public class parallelMergeSort {
      * @param numberOfThreads the number of threads that will perform parallel sort
      */
     public static void checkInput(int arraySize, int numberOfThreads) {
-        if (!parallelMergeSort.checkPowerOfTwo(numberOfThreads)) {
+        if (!MergeSortUtil.checkPowerOfTwo(numberOfThreads)) {
             System.out.println("Number of threads must be a power of two.");
             System.out.println(numberOfThreads + " is not a power of two.");
             System.exit(0);
@@ -260,8 +260,8 @@ public class parallelMergeSort {
         long array[] = { 10, 20, 35, 45, 65, 75, 85, 95, 30, 60, 115 };
         long aux[] = new long[array.length];
 
-        parallelMergeSort.mergeMins(array, aux, 0, 8, array.length);
-        parallelMergeSort.mergeMaxes(array, aux, 0, 8, array.length);
+        MergeSortUtil.mergeMins(array, aux, 0, 8, array.length);
+        MergeSortUtil.mergeMaxes(array, aux, 0, 8, array.length);
 
         // print arrays
         System.out.println("original array");

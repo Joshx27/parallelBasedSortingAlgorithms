@@ -1,85 +1,59 @@
 package michaeljosh;
 
+import java.util.Arrays;
+
 public class bitonicSort {
-    /* The parameter dir indicates the sorting direction,
-       ASCENDING or DESCENDING; if (a[i] > a[j]) agrees
-       with the direction, then a[i] and a[j] are
-       interchanged. */
-    public static void compAndSwap(int a[], int i, int j, int dir)
-    {
-        if ( (a[i] > a[j] && dir == 1) ||
-                (a[i] < a[j] && dir == 0))
-        {
-            // Swapping elements
-            int temp = a[i];
-            a[i] = a[j];
-            a[j] = temp;
+    private int[] a;
+    private final static boolean ASCENDING = true; // sorting direction
+
+    public void sort(int[] a) {
+        this.a = a;
+        bitonicSort(0, a.length, ASCENDING);
+    }
+
+    private void bitonicSort(int lo, int n, boolean dir) {
+        if (n > 1) {
+            int m = n / 2;
+            bitonicSort(lo, m, !dir);
+            bitonicSort(lo + m, n - m, dir);
+            bitonicMerge(lo, n, dir);
         }
     }
 
-    /* It recursively sorts a bitonic sequence in ascending
-       order, if dir = 1, and in descending order otherwise
-       (means dir=0). The sequence to be sorted starts at
-       index position low, the parameter cnt is the number
-       of elements to be sorted.*/
-    public static void bitonicMerge(int a[], int low, int cnt, int dir)
-    {
-        if (cnt>1)
-        {
-            int k = cnt/2;
-            for (int i=low; i<low+k; i++)
-                compAndSwap(a,i, i+k, dir);
-            bitonicMerge(a,low, k, dir);
-            bitonicMerge(a,low+k, k, dir);
+    private void bitonicMerge(int lo, int n, boolean dir) {
+        if (n > 1) {
+            int m = greatestPowerOfTwoLessThan(n);
+            for (int i = lo; i < lo + n - m; i++)
+                compare(i, i + m, dir);
+            bitonicMerge(lo, m, dir);
+            bitonicMerge(lo + m, n - m, dir);
         }
     }
 
-    /* This function first produces a bitonic sequence by
-       recursively sorting its two halves in opposite sorting
-       orders, and then  calls bitonicMerge to make them in
-       the same order */
-    public static void bitonicSort(int a[], int low, int cnt, int dir)
-    {
-        if (cnt>1)
-        {
-            int k = cnt/2;
-
-            // sort in ascending order since dir here is 1
-            bitonicSort(a, low, k, 1);
-
-            // sort in descending order since dir here is 0
-            bitonicSort(a,low+k, k, 0);
-
-            // Will merge whole sequence in ascending order
-            // since dir=1.
-            bitonicMerge(a, low, cnt, dir);
-        }
+    private void compare(int i, int j, boolean dir) {
+        if (dir == (a[i] > a[j]))
+            exchange(i, j);
     }
 
-    /*Caller of bitonicSort for sorting the entire array
-      of length N in ASCENDING order */
-    public static void sort(int a[], int N, int up)
-    {
-        bitonicSort(a, 0, N, up);
+    private void exchange(int i, int j) {
+        int t = a[i];
+        a[i] = a[j];
+        a[j] = t;
     }
 
-    /* A utility function to print array of size n */
-    public static void printArray(int arr[])
-    {
-        int n = arr.length;
-        for (int i=0; i<n; ++i)
-            System.out.print(arr[i] + " ");
-        System.out.println();
+    // n>=2 and n<=Integer.MAX_VALUE
+    private int greatestPowerOfTwoLessThan(int n) {
+        int k = 1;
+        while (k > 0 && k < n)
+            k = k << 1;
+        return k >>> 1;
     }
 
-    // Driver method
-    public static void main(String args[])
-    {
-        int a[] = {3, 7, 4, 8, 6, 2, 1, 5};
-        int up = 1;
+    public static void main(String args[]) {
+        int a[] = { 3, 7, 6, 2, 1 };
         bitonicSort ob = new bitonicSort();
-        ob.sort(a, a.length,up);
+        ob.sort(a);
         System.out.println("\nSorted array");
-        printArray(a);
+        System.out.println(Arrays.toString(a));
     }
 }
