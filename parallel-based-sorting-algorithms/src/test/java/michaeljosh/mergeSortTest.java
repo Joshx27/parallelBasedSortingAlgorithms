@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 import michaeljosh.MergeSort.*;
 
-public class MergeSortTest {
+public class mergeSortTest {
 
     int arraySize = 10000000;
     long array[] = new long[arraySize];

@@ -1,8 +1,8 @@
 package michaeljosh;
 
 import java.util.Arrays;
-import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveAction;
 
 public class parallelBitonicSort extends RecursiveAction {
     private static final long serialVersionUID = 1L;

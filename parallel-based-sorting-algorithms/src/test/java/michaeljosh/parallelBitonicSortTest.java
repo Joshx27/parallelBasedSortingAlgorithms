@@ -2,7 +2,6 @@ package michaeljosh;
 
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.concurrent.ForkJoinPool;
 
 import static org.junit.Assert.assertArrayEquals;
