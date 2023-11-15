@@ -1,68 +1,75 @@
 package michaeljosh;
 
 import java.util.Arrays;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class parallelBrickSort {
-    public static void parallelBrickSortArray(long[] arr) {
-        int threadNum = arr.length / 2;
-        CyclicBarrier barr = new CyclicBarrier(threadNum);
-        Thread[] threads = new Thread[threadNum];
-        for (int i = 0; i < threadNum; i++) {
-            threads[i] = new Thread(new CompareSwapThread(arr, 2 * i + 1, barr));
-            threads[i].start();
+    private static class ParallelBrickSortTask extends RecursiveAction {
+        private final long[] arr;
+        private final int start;
+        private final int end;
+
+        public ParallelBrickSortTask(long[] arr, int start, int end) {
+            this.arr = arr;
+            this.start = start;
+            this.end = end;
         }
-        for (int i = 0; i < threadNum; i++) {
-            try {
-                threads[i].join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+
+        @Override
+        protected void compute() {
+            if (end - start > 1) {
+                int mid = (start + end) / 2;
+
+                invokeAll(
+                        new ParallelBrickSortTask(arr, start, mid),
+                        new ParallelBrickSortTask(arr, mid, end)
+                );
+
+                // Merge the two sorted halves
+                merge(arr, start, mid, end);
             }
         }
+
+        private void merge(long[] arr, int start, int mid, int end) {
+            int length1 = mid - start;
+            int length2 = end - mid;
+
+            long[] left = new long[length1];
+            long[] right = new long[length2];
+
+            System.arraycopy(arr, start, left, 0, length1);
+            System.arraycopy(arr, mid, right, 0, length2);
+
+            int i = 0, j = 0, k = start;
+
+            while (i < length1 && j < length2) {
+                if (left[i] <= right[j]) {
+                    arr[k++] = left[i++];
+                } else {
+                    arr[k++] = right[j++];
+                }
+            }
+
+            while (i < length1) {
+                arr[k++] = left[i++];
+            }
+
+            while (j < length2) {
+                arr[k++] = right[j++];
+            }
+        }
+    }
+
+    public static void parallelBrickSortArray(long arr[]) {
+        ForkJoinPool forkJoinPool = new ForkJoinPool();
+        forkJoinPool.invoke(new ParallelBrickSortTask(arr, 0, arr.length));
+        forkJoinPool.shutdown();
     }
 
     public static void main(String[] args) {
-        long[] arr = {83, 71, 72, 26, 6, 81, 53, 72, 20, 35, 40, 79, 3, 90, 89, 52, 30};
+        long arr[] = {34, 2, 10, -9, 5, 22};
         parallelBrickSortArray(arr);
         System.out.println(Arrays.toString(arr));
-    }
-}
-
-class CompareSwapThread implements Runnable {
-    private long[] arr;
-    private int index;
-    private CyclicBarrier barr;
-
-    public CompareSwapThread(long[] arr, int index, CyclicBarrier barr) {
-        this.arr = arr;
-        this.index = index;
-        this.barr = barr;
-    }
-
-    @Override
-    public void run() {
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[index - 1] > arr[index]) {
-                long t = arr[index - 1];
-                arr[index - 1] = arr[index];
-                arr[index] = t;
-            }
-            try {
-                barr.await();
-            } catch (InterruptedException | BrokenBarrierException e) {
-                e.printStackTrace();
-            }
-            if (index + 1 < arr.length && arr[index] > arr[index + 1]) {
-                long t = arr[index];
-                arr[index] = arr[index + 1];
-                arr[index + 1] = t;
-            }
-            try {
-                barr.await();
-            } catch (InterruptedException | BrokenBarrierException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

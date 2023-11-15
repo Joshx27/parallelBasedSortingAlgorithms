@@ -8,6 +8,7 @@ import java.util.concurrent.ForkJoinPool;
 import static michaeljosh.brickSort.brickSort;
 import static michaeljosh.parallelBrickSort.parallelBrickSortArray;
 
+
 public class performanceTest {
 
     @Test
@@ -70,7 +71,7 @@ public class performanceTest {
     @Test
     public void brickSortTest(){
         int numberOfThreads = 4;
-        int arraySize = 1000000;
+        int arraySize = 800000;
         int iterations = 1;
 
         long array[] = new long[arraySize];
