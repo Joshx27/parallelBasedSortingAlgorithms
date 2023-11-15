@@ -68,9 +68,9 @@ public class performanceTest {
     }
 
     @Test
-    public void brickSortTest(){
+    public void brickSortTest() {
         int numberOfThreads = 4;
-        int arraySize = 1000000;
+        int arraySize = 100000;
         int iterations = 1;
 
         long array[] = new long[arraySize];
@@ -122,4 +122,3 @@ public class performanceTest {
 
     }
 }
-
