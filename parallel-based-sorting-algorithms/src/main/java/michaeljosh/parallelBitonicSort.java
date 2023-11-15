@@ -69,7 +69,7 @@ public class parallelBitonicSort extends RecursiveAction {
         a[j] = t;
     }
 
-    // n>=2  and  n<=Integer.MAX_VALUE
+    // n>=2 and n<=Integer.MAX_VALUE
     private int greatestPowerOfTwoLessThan(int n) {
         int k = 1;
         while (k > 0 && k < n)
@@ -77,11 +77,10 @@ public class parallelBitonicSort extends RecursiveAction {
         return k >>> 1;
     }
 
-
     // Rest of the code remains the same
 
     public static void main(String args[]) {
-        int a[] = {3, 7, 6, 2, 1};
+        int a[] = { 3, 7, 6, 2, 1 };
         parallelBitonicSort ob = new parallelBitonicSort(a, 0, a.length, true);
         ForkJoinPool pool = new ForkJoinPool();
         pool.invoke(ob);

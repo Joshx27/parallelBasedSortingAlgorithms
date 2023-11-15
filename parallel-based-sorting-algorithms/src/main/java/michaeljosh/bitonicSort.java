@@ -1,11 +1,10 @@
 package michaeljosh;
 
-
 import java.util.Arrays;
 
 public class bitonicSort {
     private int[] a;
-    private final static boolean ASCENDING = true;    // sorting direction
+    private final static boolean ASCENDING = true; // sorting direction
 
     public void sort(int[] a) {
         this.a = a;
@@ -42,7 +41,7 @@ public class bitonicSort {
         a[j] = t;
     }
 
-    // n>=2  and  n<=Integer.MAX_VALUE
+    // n>=2 and n<=Integer.MAX_VALUE
     private int greatestPowerOfTwoLessThan(int n) {
         int k = 1;
         while (k > 0 && k < n)
@@ -51,7 +50,7 @@ public class bitonicSort {
     }
 
     public static void main(String args[]) {
-        int a[] = {3, 7, 6, 2, 1};
+        int a[] = { 3, 7, 6, 2, 1 };
         bitonicSort ob = new bitonicSort();
         ob.sort(a);
         System.out.println("\nSorted array");
