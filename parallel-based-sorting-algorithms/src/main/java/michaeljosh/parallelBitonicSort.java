@@ -9,7 +9,6 @@ public class parallelBitonicSort extends RecursiveAction {
     private long[] a;
     private int lo, n;
     private boolean dir;
-
     private static final int THRESHOLD = 4; // Threshold for parallelization
 
     public parallelBitonicSort(long[] a, int lo, int n, boolean dir) {
@@ -36,8 +35,6 @@ public class parallelBitonicSort extends RecursiveAction {
     }
 
     private void bitonicSort(int lo, int n, boolean dir) {
-        // Same as your original code
-        // ...
         if (n > 1) {
             int m = n / 2;
             bitonicSort(lo, m, !dir);
@@ -47,8 +44,6 @@ public class parallelBitonicSort extends RecursiveAction {
     }
 
     private void bitonicMerge(int lo, int n, boolean dir) {
-        // Same as your original code
-        // ...
         if (n > 1) {
             int m = greatestPowerOfTwoLessThan(n);
             for (int i = lo; i < lo + n - m; i++)
@@ -69,7 +64,6 @@ public class parallelBitonicSort extends RecursiveAction {
         a[j] = t;
     }
 
-    // n>=2 and n<=Integer.MAX_VALUE
     private int greatestPowerOfTwoLessThan(int n) {
         int k = 1;
         while (k > 0 && k < n)
@@ -77,10 +71,8 @@ public class parallelBitonicSort extends RecursiveAction {
         return k >>> 1;
     }
 
-    // Rest of the code remains the same
-
     public static void main(String args[]) {
-        long a[] = { 3, 7, 6, 2, 1 };
+        long a[] = {3, 7, 6, 2, 1};
         parallelBitonicSort ob = new parallelBitonicSort(a, 0, a.length, true);
         ForkJoinPool pool = new ForkJoinPool();
         pool.invoke(ob);

@@ -13,20 +13,20 @@ public class brickSort {
 
             // Perform Bubble sort on odd indexed element
             for (long i = 1; i <= n - 2; i = i + 2) {
-                if (arr[(int)i] > arr[(int)(i + 1)]) {
-                    temp = arr[(int)i];
-                    arr[(int)i] = arr[(int)(i + 1)];
-                    arr[(int)(i + 1)] = temp;
+                if (arr[(int) i] > arr[(int) (i + 1)]) {
+                    temp = arr[(int) i];
+                    arr[(int) i] = arr[(int) (i + 1)];
+                    arr[(int) (i + 1)] = temp;
                     isSorted = false;
                 }
             }
 
             // Perform Bubble sort on even indexed element
             for (long i = 0; i <= n - 2; i = i + 2) {
-                if (arr[(int)i] > arr[(int)(i + 1)]) {
-                    temp = arr[(int)i];
-                    arr[(int)i] = arr[(int)(i + 1)];
-                    arr[(int)(i + 1)] = temp;
+                if (arr[(int) i] > arr[(int) (i + 1)]) {
+                    temp = arr[(int) i];
+                    arr[(int) i] = arr[(int) (i + 1)];
+                    arr[(int) (i + 1)] = temp;
                     isSorted = false;
                 }
             }
@@ -34,7 +34,7 @@ public class brickSort {
     }
 
     public static void main(String[] args) {
-        long arr[] = {34, 2, 10, -9};
+        long arr[] = {34, 2, 10, -9, 4, 6, 8, 9};
         brickSort(arr);
         System.out.println(Arrays.toString(arr));
     }
