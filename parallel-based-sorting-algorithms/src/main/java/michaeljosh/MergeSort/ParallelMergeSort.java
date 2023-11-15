@@ -161,26 +161,29 @@ public class ParallelMergeSort extends Thread {
         int numberOfThreads = 4;
         int arraySize = 10000000;
         long array[] = new long[arraySize];
-        long array2[] = new long[arraySize];
 
         MergeSortUtil.arrayInit(array, 20);
-        MergeSortUtil.arrayInit(array2, 30);
 
         long startTime = System.currentTimeMillis();
 
         // Custom sequential merge sort
-        SequentialMergeSort.mergeSort(array);
+        long sequentialCopy[] = Arrays.copyOf(array, array.length);
+        SequentialMergeSort.mergeSort(sequentialCopy);
         long duration = System.currentTimeMillis() - startTime;
         System.out.println("Custom sequential sorting time: " + duration);
 
         startTime = System.currentTimeMillis();
-        Arrays.parallelSort(array); // system parallel sort
+        // Create a new copy for system parallel sort
+        long systemParallelCopy[] = Arrays.copyOf(array, array.length);
+        Arrays.parallelSort(systemParallelCopy);
         duration = System.currentTimeMillis() - startTime;
         System.out.println("System sorting time: " + duration);
 
         // Custom parallel merge sort
         startTime = System.currentTimeMillis();
-        parallelMergeSort(array, numberOfThreads);
+        // Create a new copy for custom parallel sort
+        long customParallelCopy[] = Arrays.copyOf(array, array.length);
+        parallelMergeSort(customParallelCopy, numberOfThreads);
         duration = System.currentTimeMillis() - startTime;
         System.out.println("Custom parallel sorting time: " + duration);
 
