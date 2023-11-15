@@ -5,7 +5,7 @@ import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 public class parallelBrickSort {
-    public static void sortArr(long[] arr) {
+    public static void parallelBrickSortArray(long[] arr) {
         int threadNum = arr.length / 2;
         CyclicBarrier barr = new CyclicBarrier(threadNum);
         Thread[] threads = new Thread[threadNum];
@@ -24,7 +24,7 @@ public class parallelBrickSort {
 
     public static void main(String[] args) {
         long[] arr = {83, 71, 72, 26, 6, 81, 53, 72, 20, 35, 40, 79, 3, 90, 89, 52, 30};
-        sortArr(arr);
+        parallelBrickSortArray(arr);
         System.out.println(Arrays.toString(arr));
     }
 }
