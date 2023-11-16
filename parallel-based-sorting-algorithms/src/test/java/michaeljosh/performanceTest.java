@@ -11,7 +11,7 @@ import michaeljosh.QuickSort.*;
 import michaeljosh.RadixSort.*;
 
 public class PerformanceTest {
-    int arraySize = 500;
+    int arraySize = 6400000;
     int iterations = 10;
     int numberOfThreads = 4;
     long array[] = new long[arraySize];
@@ -51,7 +51,8 @@ public class PerformanceTest {
             long duration = System.currentTimeMillis() - startTime;
             // MergeSortUtil.isSorted(sequentialCopy);
             sequentialTotalTime += duration;
-            System.out.println("Custom sequential sorting time (Iteration " + (i + 1) + "): " + duration);
+            // System.out.println("Custom sequential sorting time (Iteration " + (i + 1) +
+            // "): " + duration);
         }
         double sequentialMeanTime = (double) sequentialTotalTime / iterations;
         System.out.println("Mean Custom sequential sorting time: " + sequentialMeanTime);
@@ -65,7 +66,8 @@ public class PerformanceTest {
             long duration = System.currentTimeMillis() - startTime;
             // MergeSortUtil.isSorted(customParallelCopy);
             customParallelTotalTime += duration;
-            System.out.println("Custom parallel sorting time (Iteration " + (i + 1) + "): " + duration);
+            // System.out.println("Custom parallel sorting time (Iteration " + (i + 1) + "):
+            // " + duration);
         }
         double customParallelMeanTime = (double) customParallelTotalTime / iterations;
         System.out.println("Mean Custom parallel sorting time: " + customParallelMeanTime);
@@ -86,7 +88,8 @@ public class PerformanceTest {
             SequentialQuickSort.quickSort(sequentialCopy);
             long duration = System.currentTimeMillis() - startTime;
             sequentialTotalTime += duration;
-            System.out.println("Custom sequential sorting time (Iteration " + (i + 1) + "): " + duration);
+            // System.out.println("Custom sequential sorting time (Iteration " + (i + 1) +
+            // "): " + duration);
         }
         double sequentialMeanTime = (double) sequentialTotalTime / iterations;
         System.out.println("Mean Custom sequential sorting time: " + sequentialMeanTime);
@@ -99,7 +102,8 @@ public class PerformanceTest {
             ParallelQuickSort.quickSortParallel(customQuickSortCopy, numberOfThreads);
             long duration = System.currentTimeMillis() - startTime;
             customQuickSortTotalTime += duration;
-            System.out.println("Custom parallel QuickSort sorting time (Iteration " + (i + 1) + "): " + duration);
+            // System.out.println("Custom parallel QuickSort sorting time (Iteration " + (i
+            // + 1) + "): " + duration);
         }
         double customQuickSortMeanTime = (double) customQuickSortTotalTime / iterations;
         System.out.println("Mean Custom parallel QuickSort sorting time: " + customQuickSortMeanTime);
@@ -117,7 +121,8 @@ public class PerformanceTest {
             SequentialRadixSort.radixSort(sequentialCopy);
             long duration = System.currentTimeMillis() - startTime;
             sequentialTotalTime += duration;
-            System.out.println("Custom sequential sorting time (Iteration " + (i + 1) + "): " + duration);
+            // System.out.println("Custom sequential sorting time (Iteration " + (i + 1) +
+            // "): " + duration);
         }
         double sequentialMeanTime = (double) sequentialTotalTime / iterations;
         System.out.println("Mean Custom sequential sorting time: " + sequentialMeanTime);
@@ -131,7 +136,8 @@ public class PerformanceTest {
             radixSort.radixMulti(radixSortCopy);
             long duration = System.currentTimeMillis() - startTime;
             radixSortTotalTime += duration;
-            System.out.println("Custom parallel Radix Sort sorting time (Iteration " + (i + 1) + "): " + duration);
+            // System.out.println("Custom parallel Radix Sort sorting time (Iteration " + (i
+            // + 1) + "): " + duration);
         }
         double radixSortMeanTime = (double) radixSortTotalTime / iterations;
         System.out.println("Mean Custom parallel Radix Sort sorting time: " + radixSortMeanTime);
@@ -154,7 +160,8 @@ public class PerformanceTest {
             long duration = System.currentTimeMillis() - startTime;
             // MergeSortUtil.isSorted(sequentialCopy);
             sequentialTotalTime += duration;
-            System.out.println("Custom sequential sorting time (Iteration " + (i + 1) + "): " + duration);
+            // System.out.println("Custom sequential sorting time (Iteration " + (i + 1) +
+            // "): " + duration);
         }
         double sequentialMeanTime = (double) sequentialTotalTime / iterations;
         System.out.println("Mean Custom sequential sorting time: " + sequentialMeanTime);
@@ -170,7 +177,8 @@ public class PerformanceTest {
             long duration = System.currentTimeMillis() - startTime;
             // MergeSortUtil.isSorted(customParallelCopy);
             customParallelTotalTime += duration;
-            System.out.println("Custom parallel sorting time (Iteration " + (i + 1) + "): " + duration);
+            // System.out.println("Custom parallel sorting time (Iteration " + (i + 1) + "):
+            // " + duration);
         }
         double customParallelMeanTime = (double) customParallelTotalTime / iterations;
         System.out.println("Mean Custom parallel sorting time: " + customParallelMeanTime);
@@ -183,19 +191,21 @@ public class PerformanceTest {
 
         MergeSortUtil.arrayInit(array, 20);
 
-        // Custom sequential brick sort
-        long sequentialTotalTime = 0;
-        for (int i = 0; i < iterations; i++) {
-            long sequentialCopy[] = Arrays.copyOf(array, array.length);
-            long startTime = System.currentTimeMillis();
-            SequentialBrickSort.brickSort(sequentialCopy);
-            long duration = System.currentTimeMillis() - startTime;
-            // MergeSortUtil.isSorted(sequentialCopy);
-            sequentialTotalTime += duration;
-            System.out.println("Custom sequential sorting time (Iteration " + (i + 1) + "): " + duration);
-        }
-        double sequentialMeanTime = (double) sequentialTotalTime / iterations;
-        System.out.println("Mean Custom sequential sorting time: " + sequentialMeanTime);
+        // // Custom sequential brick sort
+        // long sequentialTotalTime = 0;
+        // for (int i = 0; i < iterations; i++) {
+        // long sequentialCopy[] = Arrays.copyOf(array, array.length);
+        // long startTime = System.currentTimeMillis();
+        // SequentialBrickSort.brickSort(sequentialCopy);
+        // long duration = System.currentTimeMillis() - startTime;
+        // // MergeSortUtil.isSorted(sequentialCopy);
+        // sequentialTotalTime += duration;
+        // System.out.println("Custom sequential sorting time (Iteration " + (i + 1) +
+        // "): " + duration);
+        // }
+        // double sequentialMeanTime = (double) sequentialTotalTime / iterations;
+        // System.out.println("Mean Custom sequential sorting time: " +
+        // sequentialMeanTime);
 
         // Custom parallel brick sort
         long customParallelTotalTime = 0;
@@ -206,7 +216,8 @@ public class PerformanceTest {
             long duration = System.currentTimeMillis() - startTime;
             // MergeSortUtil.isSorted(customParallelCopy);
             customParallelTotalTime += duration;
-            System.out.println("Custom parallel sorting time (Iteration " + (i + 1) + "): " + duration);
+            // System.out.println("Custom parallel sorting time (Iteration " + (i + 1) + "):
+            // " + duration);
         }
         double customParallelMeanTime = (double) customParallelTotalTime / iterations;
         System.out.println("Mean Custom parallel sorting time: " + customParallelMeanTime);
