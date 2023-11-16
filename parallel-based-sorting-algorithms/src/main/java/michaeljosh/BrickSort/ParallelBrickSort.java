@@ -2,7 +2,6 @@ package michaeljosh.BrickSort;
 
 import java.util.Arrays;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ParallelBrickSort {
     private static class ParallelBrickSortTask extends RecursiveAction {

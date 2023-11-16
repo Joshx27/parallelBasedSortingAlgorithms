@@ -125,7 +125,6 @@ public class ParallelRadixSort {
 
     private void radixSort(long[] a, long[] b, int maskLen, int shift) { // Change from int to long
         int mask = (1 << maskLen) - 1;
-        long acumVal = 0; // Change from int to long
         int numSif = mask + 1;
         int k = n / antTraader;
         CyclicBarrier synk = new CyclicBarrier(antTraader);

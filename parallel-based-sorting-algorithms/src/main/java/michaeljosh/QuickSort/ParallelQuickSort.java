@@ -1,8 +1,6 @@
 package michaeljosh.QuickSort;
 
 import java.util.concurrent.*;
-import michaeljosh.MergeSort.MergeSortUtil;
-import java.util.Arrays;
 
 public class ParallelQuickSort {
 
