@@ -11,7 +11,7 @@ import michaeljosh.QuickSort.*;
 import michaeljosh.RadixSort.*;
 
 public class PerformanceTest {
-    int arraySize = 6400000;
+    int arraySize = 400000;
     int iterations = 10;
     int numberOfThreads = 4;
     long array[] = new long[arraySize];
