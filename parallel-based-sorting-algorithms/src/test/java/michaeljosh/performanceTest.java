@@ -10,7 +10,7 @@ import michaeljosh.MergeSort.*;
 import michaeljosh.QuickSort.*;
 import michaeljosh.RadixSort.*;
 
-public class PerformanceTest {
+public class performanceTest {
     int arraySize = 6400000;
     int iterations = 10;
     int numberOfThreads = 4;
