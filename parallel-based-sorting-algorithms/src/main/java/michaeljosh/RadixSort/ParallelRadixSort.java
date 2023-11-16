@@ -8,18 +8,12 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-/***********************************************************
- * Oblig 3 - sekvensiell kode, INF2440 v2017. Ifi, Uio, Arne Maus for store
- * verdier av n > 100 m, kjør (f.eks): >java -Xmx16000m MultiRadix 1000000000
- ************************************************************/
-
 public class ParallelRadixSort {
     long[] a; // Change from int to long
     int n;
     boolean debug = false;
     long max = 0; // Change from int to long
-    final static int NUM_BIT = 8; // alle tall 6-11 .. finn ut hvilken verdi som
-                                  // er best
+    final static int NUM_BIT = 8;
 
     int antTraader = Runtime.getRuntime().availableProcessors();
     CyclicBarrier cb = new CyclicBarrier(antTraader + 1);
@@ -337,4 +331,4 @@ public class ParallelRadixSort {
         System.out.println("Main thread has finished.");
     }
 
-}// SekvensiellRadix
+}

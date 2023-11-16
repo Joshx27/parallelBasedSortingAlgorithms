@@ -12,8 +12,8 @@ public class SequentialQuickSort {
 
     private static void quickSort(long arr[], int low, int high) {
         if (low < high) {
-            int partitionIndex = partition(arr, low, high); // Corrected typo here
-            quickSort(arr, low, partitionIndex - 1); // Corrected typo here
+            int partitionIndex = partition(arr, low, high);
+            quickSort(arr, low, partitionIndex - 1);
             quickSort(arr, partitionIndex + 1, high);
         }
     }
@@ -25,13 +25,13 @@ public class SequentialQuickSort {
         for (int j = low; j < high; j++) {
             if (arr[j] < pivot) {
                 i++;
-                long temp = arr[i]; // Changed 'int' to 'long' here
+                long temp = arr[i];
                 arr[i] = arr[j];
                 arr[j] = temp;
             }
         }
 
-        long temp = arr[i + 1]; // Changed 'int' to 'long' here
+        long temp = arr[i + 1];
         arr[i + 1] = arr[high];
         arr[high] = temp;
 

@@ -1,49 +1,5 @@
 package michaeljosh.MergeSort;
 
-/**
- * Copyright 2017 Ahmet Uyar
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files 
- * (the "Software"), to deal in the Software without restriction, including without limitation 
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, 
- * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
-/**
- * Parallel iterative merge sort with CyclicBarrier with double thread merging
- * This is an improved version of MergeSortWithBarriersDTM1.java class
- * 
- * It removes two restrictions from that algorithm: 
- * 	 the number of threads may be any positive number. It does not have to be a power of 2.
- *   the number of elements does not need to be divisible by the number of threads.
- *   
- * the number of elements are divided by the number of threads (cores)
- * each thread sorts its range sequentially
- * then each merge operation is handled by two threads
- * one thread merges the first half (smaller ones), 
- * the other thread merges the second half (larger ones)
- * 
- * if there are 16 sorted subarrays to be merged,
- * then 16 threads perform the merge operation
- * 
- * if there are 15 sorted subarrays to be merged,
- * 14 threads perform the merge operation for 14 sorted subarrays, 
- * the last subarray is not merged in this iteration
- * 
- * Synchronization of threads:
- *   threads wait to synchronize at two points in each iteration
- *     a) after merging two sorted subarrays
- *     b) after copying back to the original array
- * 
- * @author Ahmet Uyar
- */
 import java.util.Arrays;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
@@ -158,55 +114,5 @@ public class ParallelMergeSort extends Thread {
     }
 
     public static void main(String args[]) {
-        int numberOfThreads = 4;
-        int arraySize = 50000;
-        int iterations = 10;
-
-        long array[] = new long[arraySize];
-        MergeSortUtil.arrayInit(array, 20);
-
-        // Custom sequential merge sort
-        long sequentialTotalTime = 0;
-        for (int i = 0; i < iterations; i++) {
-            long startTime = System.currentTimeMillis();
-            long sequentialCopy[] = Arrays.copyOf(array, array.length);
-            SequentialMergeSort.mergeSort(sequentialCopy);
-            long duration = System.currentTimeMillis() - startTime;
-            // MergeSortUtil.isSorted(sequentialCopy);
-            sequentialTotalTime += duration;
-            System.out.println("Custom sequential sorting time (Iteration " + (i + 1) + "): " + duration);
-        }
-        double sequentialMeanTime = (double) sequentialTotalTime / iterations;
-        System.out.println("Mean Custom sequential sorting time: " + sequentialMeanTime);
-
-        // System parallel sort
-        long systemParallelTotalTime = 0;
-        for (int i = 0; i < iterations; i++) {
-            long startTime = System.currentTimeMillis();
-            long systemParallelCopy[] = Arrays.copyOf(array, array.length);
-            Arrays.parallelSort(systemParallelCopy);
-            long duration = System.currentTimeMillis() - startTime;
-            // MergeSortUtil.isSorted(systemParallelCopy);
-            systemParallelTotalTime += duration;
-            System.out.println("System sorting time (Iteration " + (i + 1) + "): " + duration);
-        }
-        double systemParallelMeanTime = (double) systemParallelTotalTime / iterations;
-        System.out.println("Mean System sorting time: " + systemParallelMeanTime);
-
-        // Custom parallel merge sort
-        long customParallelTotalTime = 0;
-        for (int i = 0; i < iterations; i++) {
-            long startTime = System.currentTimeMillis();
-            long customParallelCopy[] = Arrays.copyOf(array, array.length);
-            parallelMergeSort(customParallelCopy, numberOfThreads);
-            long duration = System.currentTimeMillis() - startTime;
-            // MergeSortUtil.isSorted(customParallelCopy);
-            customParallelTotalTime += duration;
-            System.out.println("Custom parallel sorting time (Iteration " + (i + 1) + "): " + duration);
-        }
-        double customParallelMeanTime = (double) customParallelTotalTime / iterations;
-        System.out.println("Mean Custom parallel sorting time: " + customParallelMeanTime);
-
-        System.out.println("Main thread has finished.");
     }
 }
