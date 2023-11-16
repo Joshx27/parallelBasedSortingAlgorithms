@@ -1,17 +1,17 @@
-package michaeljosh;
+package michaeljosh.BitonicSort;
 
 import java.util.Arrays;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 
-public class parallelBitonicSort extends RecursiveAction {
+public class ParallelBitonicSort extends RecursiveAction {
     private static final long serialVersionUID = 1L;
     private long[] a;
     private int lo, n;
     private boolean dir;
     private static final int THRESHOLD = 4; // Threshold for parallelization
 
-    public parallelBitonicSort(long[] a, int lo, int n, boolean dir) {
+    public ParallelBitonicSort(long[] a, int lo, int n, boolean dir) {
         this.a = a;
         this.lo = lo;
         this.n = n;
@@ -26,8 +26,8 @@ public class parallelBitonicSort extends RecursiveAction {
             int m = n / 2;
 
             // Parallel execution of two halves
-            invokeAll(new parallelBitonicSort(a, lo, m, !dir),
-                    new parallelBitonicSort(a, lo + m, n - m, dir));
+            invokeAll(new ParallelBitonicSort(a, lo, m, !dir),
+                    new ParallelBitonicSort(a, lo + m, n - m, dir));
 
             // Merge the two halves
             bitonicMerge(lo, n, dir);
@@ -72,8 +72,8 @@ public class parallelBitonicSort extends RecursiveAction {
     }
 
     public static void main(String args[]) {
-        long a[] = {3, 7, 6, 2, 1};
-        parallelBitonicSort ob = new parallelBitonicSort(a, 0, a.length, true);
+        long a[] = { 3, 7, 6, 2, 1 };
+        ParallelBitonicSort ob = new ParallelBitonicSort(a, 0, a.length, true);
         ForkJoinPool pool = new ForkJoinPool();
         pool.invoke(ob);
         System.out.println("\nSorted array");

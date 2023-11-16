@@ -1,11 +1,11 @@
 package michaeljosh;
 
 import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.concurrent.ForkJoinPool;
-import static michaeljosh.brickSort.brickSort;
-import static michaeljosh.parallelBrickSort.parallelBrickSortArray;
+
+import michaeljosh.BrickSort.*;
+import michaeljosh.BitonicSort.*;
 import michaeljosh.MergeSort.*;
 import michaeljosh.QuickSort.*;
 import michaeljosh.RadixSort.*;
@@ -149,7 +149,7 @@ public class PerformanceTest {
         for (int i = 0; i < iterations; i++) {
             long startTime = System.currentTimeMillis();
             long sequentialCopy[] = Arrays.copyOf(array, array.length);
-            bitonicSort bitonic = new bitonicSort();
+            SequentialBitonicSort bitonic = new SequentialBitonicSort();
             bitonic.sort(sequentialCopy);
             long duration = System.currentTimeMillis() - startTime;
             // MergeSortUtil.isSorted(sequentialCopy);
@@ -164,7 +164,7 @@ public class PerformanceTest {
         for (int i = 0; i < iterations; i++) {
             long startTime = System.currentTimeMillis();
             long customParallelCopy[] = Arrays.copyOf(array, array.length);
-            parallelBitonicSort ob = new parallelBitonicSort(customParallelCopy, 0, customParallelCopy.length, true);
+            ParallelBitonicSort ob = new ParallelBitonicSort(customParallelCopy, 0, customParallelCopy.length, true);
             ForkJoinPool pool = new ForkJoinPool();
             pool.invoke(ob);
             long duration = System.currentTimeMillis() - startTime;
@@ -188,7 +188,7 @@ public class PerformanceTest {
         for (int i = 0; i < iterations; i++) {
             long sequentialCopy[] = Arrays.copyOf(array, array.length);
             long startTime = System.currentTimeMillis();
-            brickSort(sequentialCopy);
+            SequentialBrickSort.brickSort(sequentialCopy);
             long duration = System.currentTimeMillis() - startTime;
             // MergeSortUtil.isSorted(sequentialCopy);
             sequentialTotalTime += duration;
@@ -202,7 +202,7 @@ public class PerformanceTest {
         for (int i = 0; i < iterations; i++) {
             long customParallelCopy[] = Arrays.copyOf(array, array.length);
             long startTime = System.currentTimeMillis();
-            parallelBrickSortArray(customParallelCopy);
+            ParallelBrickSort.parallelBrickSortArray(customParallelCopy);
             long duration = System.currentTimeMillis() - startTime;
             // MergeSortUtil.isSorted(customParallelCopy);
             customParallelTotalTime += duration;

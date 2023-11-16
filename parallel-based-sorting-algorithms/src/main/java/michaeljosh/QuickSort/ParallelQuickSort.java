@@ -62,39 +62,5 @@ public class ParallelQuickSort {
     }
 
     public static void main(String args[]) {
-        int numberOfThreads = 4;
-        int arraySize = 2000000;
-        int iterations = 10;
-
-        long array[] = new long[arraySize];
-        MergeSortUtil.arrayInit(array, 20);
-
-        // Custom sequential merge sort
-        long sequentialTotalTime = 0;
-        for (int i = 0; i < iterations; i++) {
-            long startTime = System.currentTimeMillis();
-            long sequentialCopy[] = Arrays.copyOf(array, array.length);
-            SequentialQuickSort.quickSort(sequentialCopy);
-            long duration = System.currentTimeMillis() - startTime;
-            sequentialTotalTime += duration;
-            System.out.println("Custom sequential sorting time (Iteration " + (i + 1) + "): " + duration);
-        }
-        double sequentialMeanTime = (double) sequentialTotalTime / iterations;
-        System.out.println("Mean Custom sequential sorting time: " + sequentialMeanTime);
-
-        // Custom parallel QuickSort
-        long customQuickSortTotalTime = 0;
-        for (int i = 0; i < iterations; i++) {
-            long startTime = System.currentTimeMillis();
-            long[] customQuickSortCopy = Arrays.copyOf(array, array.length);
-            ParallelQuickSort.quickSortParallel(customQuickSortCopy, numberOfThreads);
-            long duration = System.currentTimeMillis() - startTime;
-            customQuickSortTotalTime += duration;
-            System.out.println("Custom parallel QuickSort sorting time (Iteration " + (i + 1) + "): " + duration);
-        }
-        double customQuickSortMeanTime = (double) customQuickSortTotalTime / iterations;
-        System.out.println("Mean Custom parallel QuickSort sorting time: " + customQuickSortMeanTime);
-
-        System.out.println("Main thread has finished.");
     }
 }

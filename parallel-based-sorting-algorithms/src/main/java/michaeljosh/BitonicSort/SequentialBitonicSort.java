@@ -1,8 +1,8 @@
-package michaeljosh;
+package michaeljosh.BitonicSort;
 
 import java.util.Arrays;
 
-public class bitonicSort {
+public class SequentialBitonicSort {
     private long[] a;
     private final static boolean ASCENDING = true; // sorting direction
 
@@ -51,7 +51,7 @@ public class bitonicSort {
 
     public static void main(String args[]) {
         long a[] = { 3, 7, 6, 2, 1 };
-        bitonicSort ob = new bitonicSort();
+        SequentialBitonicSort ob = new SequentialBitonicSort();
         ob.sort(a);
         System.out.println("\nSorted array");
         System.out.println(Arrays.toString(a));

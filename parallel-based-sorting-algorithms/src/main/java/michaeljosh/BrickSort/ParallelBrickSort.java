@@ -1,10 +1,10 @@
-package michaeljosh;
+package michaeljosh.BrickSort;
 
 import java.util.Arrays;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class parallelBrickSort {
+public class ParallelBrickSort {
     private static class ParallelBrickSortTask extends RecursiveAction {
         private final long[] arr;
         private final int start;
@@ -23,8 +23,7 @@ public class parallelBrickSort {
 
                 invokeAll(
                         new ParallelBrickSortTask(arr, start, mid),
-                        new ParallelBrickSortTask(arr, mid, end)
-                );
+                        new ParallelBrickSortTask(arr, mid, end));
 
                 // Merge the two sorted halves
                 merge(arr, start, mid, end);
@@ -68,7 +67,7 @@ public class parallelBrickSort {
     }
 
     public static void main(String[] args) {
-        long arr[] = {34, 2, 10, -9, 5, 22};
+        long arr[] = { 34, 2, 10, -9, 5, 22 };
         parallelBrickSortArray(arr);
         System.out.println(Arrays.toString(arr));
     }

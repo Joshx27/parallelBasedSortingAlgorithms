@@ -293,42 +293,5 @@ public class ParallelRadixSort {
     }
 
     public static void main(String args[]) {
-        int numberOfThreads = 4;
-        int arraySize = 10000000;
-        int iterations = 10;
-
-        long array[] = new long[arraySize];
-        // MergeSortUtil.arrayInit(array, 20); // This line is commented out as the code
-        // for MergeSortUtil is not provided
-
-        // Custom sequential merge sort
-        long sequentialTotalTime = 0;
-        for (int i = 0; i < iterations; i++) {
-            long startTime = System.currentTimeMillis();
-            long sequentialCopy[] = Arrays.copyOf(array, array.length);
-            SequentialRadixSort.radixSort(sequentialCopy);
-            long duration = System.currentTimeMillis() - startTime;
-            sequentialTotalTime += duration;
-            System.out.println("Custom sequential sorting time (Iteration " + (i + 1) + "): " + duration);
-        }
-        double sequentialMeanTime = (double) sequentialTotalTime / iterations;
-        System.out.println("Mean Custom sequential sorting time: " + sequentialMeanTime);
-
-        // Custom parallel Radix Sort
-        ParallelRadixSort radixSort = new ParallelRadixSort();
-        long radixSortTotalTime = 0;
-        for (int i = 0; i < iterations; i++) {
-            long startTime = System.currentTimeMillis();
-            long[] radixSortCopy = Arrays.copyOf(array, array.length);
-            radixSort.radixMulti(radixSortCopy);
-            long duration = System.currentTimeMillis() - startTime;
-            radixSortTotalTime += duration;
-            System.out.println("Custom parallel Radix Sort sorting time (Iteration " + (i + 1) + "): " + duration);
-        }
-        double radixSortMeanTime = (double) radixSortTotalTime / iterations;
-        System.out.println("Mean Custom parallel Radix Sort sorting time: " + radixSortMeanTime);
-
-        System.out.println("Main thread has finished.");
     }
-
 }

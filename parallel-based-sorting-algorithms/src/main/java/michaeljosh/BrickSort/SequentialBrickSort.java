@@ -1,8 +1,8 @@
-package michaeljosh;
+package michaeljosh.BrickSort;
 
 import java.util.Arrays;
 
-public class brickSort {
+public class SequentialBrickSort {
     public static void brickSort(long arr[]) {
         long n = arr.length;
         boolean isSorted = false; // Initially array is unsorted
@@ -34,7 +34,7 @@ public class brickSort {
     }
 
     public static void main(String[] args) {
-        long arr[] = {34, 2, 10, -9, 4, 6, 8, 9};
+        long arr[] = { 34, 2, 10, -9, 4, 6, 8, 9 };
         brickSort(arr);
         System.out.println(Arrays.toString(arr));
     }
